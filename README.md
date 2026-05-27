@@ -1,20 +1,24 @@
 # AgriVision AI
 
-AgriVision AI is a Django-based crop health monitoring prototype. It combines leaf disease classification, affected-region highlighting, Grad-CAM explanations, weather-aware risk scoring, and a dashboard for reviewing crop scan results.
+AgriVision AI is a Django-based crop health monitoring prototype. It combines leaf disease classification, affected-region highlighting, explainable-AI overlays (Grad-CAM / saliency), weather-aware risk scoring, and a dashboard that stores and visualizes scan results over time.
 
 The project is designed to work without a physical drone during development. You can use public leaf-image datasets, phone images, or later connect drone/aerial imagery to the same upload and analysis workflow.
 
 ## Features
 
-- Disease classification with PyTorch transfer learning.
+- End-to-end Django web app: upload crop/leaf images, run analysis, and persist results in SQLite.
+- Scan dashboard: recent analyses list with health status, risk %, affected area %, and drill-down detail pages.
+- Disease classification via PyTorch transfer learning.
 - Supported classifier backbones: MobileNetV3 Small, ResNet18, EfficientNet-B0, and ViT-B/16.
-- OpenCV stress-region segmentation fallback.
-- Optional U-Net segmenter if trained weights are available.
-- Grad-CAM visual explanations for CNN backbones.
-- Input-gradient saliency fallback for ViT.
-- Weather inputs for humidity/temperature-aware risk scoring.
-- Django dashboard for image upload, affected area, prediction confidence, health status, and recommendations.
-- Research scripts for model comparison, confusion matrices, classification reports, ablation, and external dataset evaluation.
+- Stress-region segmentation:
+  - baseline OpenCV masking/thresholding to estimate affected footprint
+  - optional U-Net segmenter when trained weights are available
+- Explainability overlays:
+  - Grad-CAM for CNN backbones
+  - input-gradient saliency fallback for ViT
+- Weather-aware risk engine (humidity/temperature + disease severity + affected area).
+- Auto-generated recommendations and a probability breakdown (class → score) stored per scan.
+- Research tooling: training/evaluation scripts, confusion matrices, classification reports, ablation, and external dataset evaluation.
 
 ## Project Structure
 
@@ -104,6 +108,13 @@ python -u ml\train_segmenter.py --dataset-dir data\segmenter_ready --epochs 20 -
 ## Research Status
 
 The current repository is ready for GitHub as a project prototype. For publication, the remaining work is mainly experimental: final full-dataset training, external dataset testing, real segmentation masks and Dice/IoU scores, and a stronger ablation study. See `docs/results.md` and `docs/research_commands.md`.
+
+## Roadmap (Planned Enhancements)
+
+- Geospatial heatmaps and field trend analysis (map view) for drone/satellite workflows.
+- Async processing (Celery / Django Q) to queue heavier model inference.
+- REST API endpoints for mobile apps and drone ingestion.
+- Integrations for advisory content (for example, government schemes/subsidy lookups) once requirements and data sources are finalized.
 
 ## GitHub Notes
 
