@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AgriVision AI{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'monitoring/css/styles.css' %}">
+    <script src="{% static 'monitoring/js/dashboard.js' %}" defer></script>
+</head>
+<body class="site-body">
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
+    <header class="site-header">
+        <a class="brand" href="{% url 'monitoring:home' %}">
+            <span class="brand-mark">AV</span>
+            <span>
+                <strong>AgriVision AI</strong>
+                <small>Autonomous crop monitoring without a drone dependency</small>
+            </span>
+        </a>
+        <nav class="top-nav">
+            <a href="{% url 'monitoring:home' %}#upload">Run Analysis</a>
+            <a href="{% url 'monitoring:home' %}#modules">Modules</a>
+            <a href="/admin/">Admin</a>
+        </nav>
+    </header>
+
+    {% if messages %}
+        <section class="flash-stack">
+            {% for message in messages %}
+                <div class="flash {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <main class="page-shell">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>Built with Django, PyTorch-ready transfer learning, OpenCV-ready segmentation, and weather-assisted risk scoring.</p>
+    </footer>
+</body>
+</html>

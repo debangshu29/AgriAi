@@ -1,0 +1,14 @@
+# Django
+Django==5.0.1
+Pillow>=10.2.0
+numpy>=1.26.0
+
+# Deep learning
+torch>=2.2.0
+torchvision>=0.17.0
+
+# Computer vision and utilities
+opencv-python>=4.9.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+matplotlib>=3.8.0

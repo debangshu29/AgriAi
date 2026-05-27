@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}AgriVision AI | Smart Crop Monitoring{% endblock %}
+
+{% block content %}
+<section class="hero-panel reveal">
+    <div class="hero-copy">
+        <p class="eyebrow">Agriculture AI Project</p>
+        <h1>Autonomous crop monitoring from uploaded field imagery, leaf photos, and weather signals.</h1>
+        <p class="hero-text">
+            This starter system lets you simulate a drone-based smart farming workflow even without owning a UAV.
+            Upload a crop image, estimate stress zones, classify likely disease pressure, and combine humidity and temperature for a practical risk score.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="#upload">Start a Scan</a>
+            <a class="btn btn-secondary" href="#recent">See Dashboard Flow</a>
+        </div>
+    </div>
+    <div class="hero-metrics">
+        <article>
+            <span class="metric-value">4</span>
+            <span class="metric-label">Integrated modules</span>
+        </article>
+        <article>
+            <span class="metric-value">{{ summary.total_scans }}</span>
+            <span class="metric-label">Stored analyses</span>
+        </article>
+        <article>
+            <span class="metric-value">{{ summary.avg_risk }}%</span>
+            <span class="metric-label">Average risk score</span>
+        </article>
+        <article>
+            <span class="metric-value">{{ summary.avg_confidence }}%</span>
+            <span class="metric-label">Classifier confidence</span>
+        </article>
+    </div>
+</section>
+
+<section id="modules" class="module-grid reveal stagger">
+    <article class="module-card">
+        <p class="module-index">Module 1</p>
+        <h2>Leaf Disease Classifier</h2>
+        <p>Transfer-learning ready classification with MobileNetV3 or ResNet18 and a safe heuristic fallback when weights are not present yet.</p>
+    </article>
+    <article class="module-card">
+        <p class="module-index">Module 2</p>
+        <h2>Stress Segmentation</h2>
+        <p>OpenCV-compatible color and vegetation masking highlights stressed regions and prepares the path for U-Net or DeepLab style refinement.</p>
+    </article>
+    <article class="module-card">
+        <p class="module-index">Module 3</p>
+        <h2>Decision Dashboard</h2>
+        <p>Each scan gets a visual report with affected footprint, confidence, health status, overlays, and recommendations for action.</p>
+    </article>
+    <article class="module-card">
+        <p class="module-index">Module 4</p>
+        <h2>Weather Risk Engine</h2>
+        <p>Humidity and temperature raise or lower disease pressure to make the result closer to real field conditions.</p>
+    </article>
+</section>
+
+<section id="upload" class="analysis-layout reveal">
+    <div class="panel panel-form">
+        <div class="panel-heading">
+            <p class="eyebrow">Run Analysis</p>
+            <h2>Upload a crop image</h2>
+            <p>Use leaf images, drone-style field shots from public datasets, or even smartphone captures while you prototype.</p>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="scan-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-wide">Analyze Crop Health</button>
+        </form>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <p class="eyebrow">How To Use Without A Drone</p>
+            <h2>Prototype with public imagery</h2>
+        </div>
+        <ol class="workflow-list">
+            <li>Train the classifier on PlantVillage or PlantDoc leaf datasets.</li>
+            <li>Train the segmenter on aerial field datasets such as Agriculture-Vision.</li>
+            <li>Upload public drone shots or satellite-like field images into this dashboard.</li>
+            <li>Later swap the upload source for a real drone feed or edge device camera.</li>
+        </ol>
+        <div class="status-card">
+            <span class="status-label">Critical scans stored</span>
+            <strong>{{ summary.critical_scans }}</strong>
+        </div>
+        <div class="status-card">
+            <span class="status-label">Average affected area</span>
+            <strong>{{ summary.avg_affected }}%</strong>
+        </div>
+    </div>
+</section>
+
+<section id="recent" class="recent-section reveal">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Recent Analyses</p>
+            <h2>Dashboard cards</h2>
+        </div>
+    </div>
+    <div class="recent-grid">
+        {% for scan in recent_scans %}
+            <a class="scan-card" href="{% url 'monitoring:scan_detail' scan.pk %}">
+                <div class="scan-card-top">
+                    <span class="pill {{ scan.health_status }}">{{ scan.get_health_status_display }}</span>
+                    <span class="pill subtle">{{ scan.source_type }}</span>
+                </div>
+                <h3>{{ scan.title|default:scan.crop_type }}</h3>
+                <p>{{ scan.classifier_label|default:'pending analysis' }}</p>
+                <div class="scan-card-metrics">
+                    <span>Risk {{ scan.risk_score|floatformat:1 }}%</span>
+                    <span>Affected {{ scan.affected_area_pct|floatformat:1 }}%</span>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-card">
+                <h3>No scans yet</h3>
+                <p>Your first upload will generate a disease label, stress overlay, and weather-aware risk score.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

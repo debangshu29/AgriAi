@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Django/local runtime
+db.sqlite3
+*.sqlite3
+media/uploads/*
+media/processed/*
+media/explanations/*
+!media/uploads/.gitkeep
+!media/processed/.gitkeep
+!media/explanations/.gitkeep
+
+# Local settings and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# IDE/editor files
+.idea/
+.vscode/
+*.iml
+
+# Datasets and caches
+data/hf_archives/
+data/hf_cache/
+data/sources/
+data/external*/
+data/segmenter_ready/
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Model checkpoints and generated ML artifacts
+ml/weights/*.pt
+ml/weights/*.pth
+ml/weights/*.ckpt
+ml/weights/*.json
+ml/weights_high_accuracy/
+ml/weights_research/
+ml/weights_smoke/
+ml/reports/
+ml/reports_high_accuracy/
+ml/reports_research/
+
+# Logs and process ids
+logs/
+*.log
+*.pid
+
+# OS files
+Thumbs.db
+.DS_Store
